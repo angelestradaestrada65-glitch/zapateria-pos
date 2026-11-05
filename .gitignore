@@ -1,0 +1,25 @@
+# Maven
+target/
+
+# Eclipse / STS
+.settings/
+.classpath
+.project
+.factorypath
+.springBeans
+.sts4-cache/
+bin/
+
+# Otros IDE
+.idea/
+*.iml
+.vscode/
+
+# Secretos y configuración local
+.env
+application-dev.properties
+
+# Logs y sistema
+*.log
+.DS_Store
+Thumbs.db

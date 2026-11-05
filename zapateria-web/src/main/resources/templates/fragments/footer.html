@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<footer th:fragment="footer" class="text-center text-sm text-slate-400 py-4 mt-8">
+		Zapatería © <span th:text="${#dates.year(#dates.createNow())}">2026</span>
+	</footer>
+</body>
+
+</html>

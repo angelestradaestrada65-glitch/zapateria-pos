@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="messages">
+
+		<p th:if="${mensaje}" th:text="${mensaje}" data-flash data-delay="4000"
+			class="bg-green-100 text-green-700 text-sm rounded p-3 mb-4 transition-opacity duration-500"></p>
+
+		<p th:if="${error}" th:text="${error}" data-flash data-delay="6000"
+			class="bg-red-100 text-red-700 text-sm rounded p-3 mb-4 transition-opacity duration-500"></p>
+
+	</div>
+</body>
+
+</html>

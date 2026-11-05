@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Clientes')}"></head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+	<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+	<main class="flex-1 p-6 max-w-4xl mx-auto w-full">
+
+		<div class="flex justify-between items-center mb-4">
+			<h1 class="text-2xl font-bold text-slate-800">Clientes</h1>
+			<a th:href="@{/customers/new}" class="bg-slate-800 text-white rounded px-4 py-2 text-sm hover:bg-slate-700">
+				Nuevo cliente
+			</a>
+		</div>
+
+		<div th:replace="~{fragments/messages :: messages}"></div>
+
+		<table class="w-full text-sm bg-white rounded shadow">
+			<thead class="bg-slate-800 text-white">
+				<tr>
+					<th class="p-2 text-left">Nombre</th>
+					<th class="p-2 text-left">Teléfono</th>
+					<th class="p-2 text-left">Fiado</th>
+					<th class="p-2 text-left">Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="customer : ${customers}" class="border-b">
+					<td class="p-2" th:text="${customer.name}">Nombre</td>
+					<td class="p-2" th:text="${customer.phone}">Teléfono</td>
+					<td class="p-2" th:text="${customer.credit} ? 'Sí' : 'No'">No</td>
+					<td class="p-2 space-x-2">
+						<a th:href="@{/customers/{id}/edit(id=${customer.id})}"
+							class="text-slate-700 hover:underline">Editar</a>
+						<form th:action="@{/customers/{id}/delete(id=${customer.id})}" method="post" class="inline">
+							<button type="submit" class="text-red-600 hover:underline">Borrar</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</main>
+
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+
+</html>

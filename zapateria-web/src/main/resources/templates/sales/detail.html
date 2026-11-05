@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/head :: head('Detalle de venta')}"></head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+	<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+	<main class="flex-1 p-6 max-w-3xl mx-auto w-full">
+
+		<a th:href="@{/sales/history}" class="text-sm text-slate-500 hover:underline">&larr; Volver al historial</a>
+
+		<div class="flex items-center gap-3 mt-2 mb-1">
+			<h1 class="text-2xl font-bold text-slate-800" th:text="'Venta #' + ${sale.id}">Venta</h1>
+			<span th:replace="~{fragments/sale-state :: badge(${sale.saleState})}"></span>
+		</div>
+		<p class="text-sm text-slate-500 mb-4"
+			th:text="${#temporals.format(sale.date, 'dd/MM/yyyy HH:mm')} + ' · Vendedor: ' + ${sale.user.name} + ' · Cliente: ' + ${sale.customer != null ? sale.customer.name : 'Mostrador'}">
+		</p>
+
+		<div th:replace="~{fragments/messages :: messages}"></div>
+
+		<table class="w-full text-sm bg-white rounded shadow mb-4">
+			<thead class="bg-slate-800 text-white">
+				<tr>
+					<th class="p-2 text-left">Producto</th>
+					<th class="p-2 text-left">Talla</th>
+					<th class="p-2 text-left">Color</th>
+					<th class="p-2 text-left">Cant.</th>
+					<th class="p-2 text-left">Precio</th>
+					<th class="p-2 text-left">Subtotal</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="line : ${sale.details}" class="border-b">
+					<td class="p-2" th:text="${line.productDetail.product.name}">Producto</td>
+					<td class="p-2" th:text="${line.productDetail.size}">Talla</td>
+					<td class="p-2" th:text="${line.productDetail.color}">Color</td>
+					<td class="p-2" th:text="${line.quantity}">1</td>
+					<td class="p-2" th:text="'$' + ${#numbers.formatDecimal(line.unitPrice, 1, 'COMMA', 2, 'POINT')}">
+						Precio</td>
+					<td class="p-2" th:text="'$' + ${#numbers.formatDecimal(line.subtotal, 1, 'COMMA', 2, 'POINT')}">
+						Subtotal</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="bg-white rounded shadow p-4 text-sm space-y-1 mb-4">
+			<p>Total: <strong th:text="'$' + ${#numbers.formatDecimal(sale.total, 1, 'COMMA', 2, 'POINT')}">$0</strong>
+			</p>
+			<p>Pagado: <strong
+					th:text="'$' + ${#numbers.formatDecimal(sale.amountPaid, 1, 'COMMA', 2, 'POINT')}">$0</strong></p>
+			<p th:if="${sale.saleState.name() == 'ON_CREDIT'}">Falta por pagar:
+				<strong class="text-amber-700"
+					th:text="'$' + ${#numbers.formatDecimal(sale.pending, 1, 'COMMA', 2, 'POINT')}">$0</strong>
+			</p>
+		</div>
+
+		<form th:if="${sale.saleState.name() == 'ON_CREDIT'}" th:action="@{/sales/{id}/payment(id=${sale.id})}"
+			method="post" class="bg-white rounded shadow p-4 flex gap-3 items-end mb-4">
+			<div>
+				<label class="block text-xs text-slate-600 mb-1">Registrar abono</label>
+				<input type="number" step="0.01" min="0.01" name="amount" required
+					class="border border-slate-300 rounded px-3 py-2 w-40">
+			</div>
+			<button type="submit" class="bg-slate-800 text-white rounded px-4 py-2 text-sm hover:bg-slate-700">
+				Abonar
+			</button>
+		</form>
+
+		<form th:if="${sale.saleState.name() != 'CANCELLED'}" sec:authorize="hasAnyRole('ADMIN','SYSADMIN')"
+			th:action="@{/admin/sales/{id}/cancel(id=${sale.id})}" method="post"
+			data-confirm="¿Cancelar esta venta? El stock vuelve al inventario.">
+			<button type="submit" class="text-red-600 text-sm hover:underline">Cancelar venta</button>
+		</form>
+
+	</main>
+
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+
+</html>

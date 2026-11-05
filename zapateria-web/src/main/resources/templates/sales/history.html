@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Historial de ventas')}"></head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+	<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+	<main class="flex-1 p-6 max-w-5xl mx-auto w-full">
+
+		<div class="flex justify-between items-center mb-4">
+			<h1 class="text-2xl font-bold text-slate-800">Historial de ventas</h1>
+
+			<div class="flex gap-2 text-sm">
+				<a th:href="@{/sales/history}"
+					th:classappend="${state == null} ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'"
+					class="rounded px-3 py-1 border border-slate-300">Todas</a>
+				<a th:href="@{/sales/history(state='ON_CREDIT')}"
+					th:classappend="${state != null and state.name() == 'ON_CREDIT'} ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'"
+					class="rounded px-3 py-1 border border-slate-300">Fiados pendientes</a>
+			</div>
+		</div>
+
+		<div th:replace="~{fragments/messages :: messages}"></div>
+
+		<table class="w-full text-sm bg-white rounded shadow">
+			<thead class="bg-slate-800 text-white">
+				<tr>
+					<th class="p-2 text-left">#</th>
+					<th class="p-2 text-left">Fecha</th>
+					<th class="p-2 text-left">Vendedor</th>
+					<th class="p-2 text-left">Cliente</th>
+					<th class="p-2 text-left">Total</th>
+					<th class="p-2 text-left">Debe</th>
+					<th class="p-2 text-left">Estado</th>
+					<th class="p-2 text-left"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="sale : ${sales}" class="border-b">
+					<td class="p-2" th:text="${sale.id}">1</td>
+					<td class="p-2" th:text="${#temporals.format(sale.date, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+					<td class="p-2" th:text="${sale.user.name}">Vendedor</td>
+					<td class="p-2" th:text="${sale.customer != null ? sale.customer.name : 'Mostrador'}">Cliente</td>
+					<td class="p-2" th:text="'$' + ${#numbers.formatDecimal(sale.total, 1, 'COMMA', 2, 'POINT')}">Total
+					</td>
+					<td class="p-2"
+						th:text="${sale.saleState.name() == 'ON_CREDIT'} ? '$' + ${#numbers.formatDecimal(sale.pending, 1, 'COMMA', 2, 'POINT')} : '—'">
+						—</td>
+					<td class="p-2"><span th:replace="~{fragments/sale-state :: badge(${sale.saleState})}"></span></td>
+					<td class="p-2">
+						<a th:href="@{/sales/{id}(id=${sale.id})}" class="text-slate-700 hover:underline">Ver</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p th:if="${#lists.isEmpty(sales)}" class="text-sm text-slate-500 mt-4">No hay ventas para mostrar.</p>
+
+	</main>
+
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+
+</html>

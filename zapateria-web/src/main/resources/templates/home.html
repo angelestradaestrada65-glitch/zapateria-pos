@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Inicio')}"></head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+    <main class="flex-1 p-6 max-w-4xl mx-auto w-full">
+
+        <h1 class="text-2xl font-bold text-slate-800"
+            th:text="${#temporals.createNow().hour < 12 ? 'Buenos días' : (#temporals.createNow().hour < 19 ? 'Buenas tardes' : 'Buenas noches')} + ', ' + ${user.name}">
+            Hola
+        </h1>
+        <p class="text-sm text-slate-500 mb-6">¿Qué querés hacer?</p>
+
+        <a th:href="@{/sales}"
+           class="block bg-slate-800 text-white rounded shadow p-6 mb-6 hover:bg-slate-700 transition">
+            <h2 class="text-xl font-semibold">Registrar venta</h2>
+            <p class="text-sm text-slate-300 mt-1">Cargar una venta nueva en el mostrador</p>
+        </a>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <a th:replace="~{fragments/card :: card('/sales/history', 'Historial de ventas', 'Ver ventas anteriores y cobrar fiados')}"></a>
+
+            <a th:replace="~{fragments/card :: card('/customers', 'Clientes', 'Consultar y registrar clientes')}"></a>
+
+            <th:block sec:authorize="hasAnyRole('ADMIN','SYSADMIN')">
+                <a th:replace="~{fragments/card :: card('/admin/products', 'Productos', 'Inventario, tallas, colores y precios')}"></a>
+            </th:block>
+
+            <th:block sec:authorize="hasRole('SYSADMIN')">
+                <a th:replace="~{fragments/card :: card('/sysadmin/dashboard', 'Reportes', 'Ventas del día, fiados y stock bajo')}"></a>
+                <a th:replace="~{fragments/card :: card('/sysadmin/users', 'Usuarios', 'Dar de alta y administrar vendedores')}"></a>
+            </th:block>
+
+        </div>
+
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

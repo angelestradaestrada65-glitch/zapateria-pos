@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Reportes')}"></head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+	<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+	<main class="flex-1 p-6 max-w-5xl mx-auto w-full space-y-6">
+
+		<h1 class="text-2xl font-bold text-slate-800">Reportes</h1>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+			<div class="bg-white rounded shadow p-4">
+				<p class="text-xs text-slate-500">Vendido hoy</p>
+				<p class="text-2xl font-bold text-slate-800"
+					th:text="'$' + ${#numbers.formatDecimal(dashboard.todayTotal(), 1, 'COMMA', 2, 'POINT')}">$0</p>
+				<p class="text-xs text-slate-400" th:text="${dashboard.todayCount()} + ' venta(s)'">0 ventas</p>
+			</div>
+			<div class="bg-white rounded shadow p-4">
+				<p class="text-xs text-slate-500">Vendido este mes</p>
+				<p class="text-2xl font-bold text-slate-800"
+					th:text="'$' + ${#numbers.formatDecimal(dashboard.monthTotal(), 1, 'COMMA', 2, 'POINT')}">$0</p>
+			</div>
+			<div class="bg-white rounded shadow p-4">
+				<p class="text-xs text-slate-500">Por cobrar (fiados)</p>
+				<p class="text-2xl font-bold text-amber-700"
+					th:text="'$' + ${#numbers.formatDecimal(dashboard.pendingTotal(), 1, 'COMMA', 2, 'POINT')}">$0</p>
+			</div>
+		</div>
+
+		<div class="bg-white rounded shadow p-4">
+			<h2 class="text-sm font-semibold text-slate-700 mb-3">Ventas de los últimos 7 días</h2>
+			<canvas id="salesChart" height="90" th:data-labels="${dashboard.chartLabels()}"
+				th:data-values="${dashboard.chartValues()}"></canvas>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+			<div class="bg-white rounded shadow p-4">
+				<h2 class="text-sm font-semibold text-slate-700 mb-3">Más vendidos</h2>
+				<table class="w-full text-sm">
+					<tbody>
+						<tr th:each="p : ${dashboard.topProducts()}" class="border-b">
+							<td class="py-1" th:text="${p.name()}">Producto</td>
+							<td class="py-1 text-right" th:text="${p.quantity()} + ' pares'">0</td>
+						</tr>
+					</tbody>
+				</table>
+				<p th:if="${#lists.isEmpty(dashboard.topProducts())}" class="text-sm text-slate-400">Todavía no hay
+					ventas.</p>
+			</div>
+
+			<div class="bg-white rounded shadow p-4">
+				<h2 class="text-sm font-semibold text-slate-700 mb-3">Quién debe</h2>
+				<table class="w-full text-sm">
+					<tbody>
+						<tr th:each="d : ${dashboard.debtors()}" class="border-b">
+							<td class="py-1">
+								<span th:text="${d.name()}">Cliente</span>
+								<span class="text-xs text-slate-400" th:text="${d.phone()}">Teléfono</span>
+							</td>
+							<td class="py-1 text-right text-amber-700"
+								th:text="'$' + ${#numbers.formatDecimal(d.pending(), 1, 'COMMA', 2, 'POINT')}">$0</td>
+						</tr>
+					</tbody>
+				</table>
+				<p th:if="${#lists.isEmpty(dashboard.debtors())}" class="text-sm text-slate-400">Nadie debe nada.</p>
+			</div>
+
+		</div>
+
+		<div class="bg-white rounded shadow p-4">
+			<h2 class="text-sm font-semibold text-slate-700 mb-3">Poco stock (2 o menos)</h2>
+			<table class="w-full text-sm">
+				<tbody>
+					<tr th:each="v : ${dashboard.lowStock()}" class="border-b">
+						<td class="py-1" th:text="${v.product.name}">Producto</td>
+						<td class="py-1" th:text="'Talla ' + ${v.size} + ' · ' + ${v.color}">Talla</td>
+						<td class="py-1 text-right" th:classappend="${v.stock == 0} ? 'text-red-600'"
+							th:text="${v.stock} + ' en stock'">0</td>
+					</tr>
+				</tbody>
+			</table>
+			<p th:if="${#lists.isEmpty(dashboard.lowStock())}" class="text-sm text-slate-400">Todo con stock suficiente.
+			</p>
+		</div>
+
+	</main>
+
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+	<script th:src="@{/js/dashboard.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+	<nav th:fragment="navbar" class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
+
+		<a th:href="@{/}" class="text-lg font-semibold">Zapatería</a>
+
+		<div class="flex gap-4 items-center text-sm">
+			<a th:href="@{/sales}" class="hover:text-slate-300">Vender</a>
+
+			<a th:href="@{/sales/history}" class="hover:text-slate-300">Ventas</a>
+
+			<a th:href="@{/customers}" class="hover:text-slate-300">Clientes</a>
+
+			<a sec:authorize="hasAnyRole('ADMIN', 'SYSADMIN')" th:href="@{/admin/products}"
+				class="hover:text-slate-300">Productos</a>
+
+			<a sec:authorize="hasRole('SYSADMIN')" th:href="@{/sysadmin/dashboard}"
+				class="hover:text-slate-300">Reportes</a>
+
+			<a sec:authorize="hasRole('SYSADMIN')" th:href="@{/sysadmin/users}"
+				class="hover:text-slate-300">Usuarios</a>
+
+			<form th:action="@{/logout}" method="post" class="inline">
+				<button type="submit" class="hover:text-red-300"> Salir </button>
+			</form>
+		</div>
+	</nav>
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<a th:fragment="card(url, title, text)" th:href="@{${url}}"
+   class="block bg-white rounded shadow p-5 hover:shadow-md hover:-translate-y-0.5 transition">
+    <h2 class="text-lg font-semibold text-slate-800" th:text="${title}">Título</h2>
+    <p class="text-sm text-slate-500 mt-1" th:text="${text}">Descripción</p>
+</a>
+</body>
+</html>

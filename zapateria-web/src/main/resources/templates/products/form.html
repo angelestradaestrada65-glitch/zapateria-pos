@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Producto')}"></head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+	<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+	<main class="flex-1 p-6 max-w-md mx-auto w-full">
+
+		<h1 class="text-2xl font-bold text-slate-800 mb-4">
+			<span th:if="${productId == null}">Nuevo producto</span>
+			<span th:if="${productId != null}">Editar producto</span>
+		</h1>
+
+		<form th:action="${productId == null} ? @{/admin/products} : @{/admin/products/{id}(id=${productId})}"
+			th:object="${productForm}" method="post" class="bg-white rounded shadow p-6 space-y-4">
+
+			<div>
+				<label class="block text-sm text-slate-600 mb-1">Nombre</label>
+				<input type="text" th:field="*{name}" required class="w-full border border-slate-300 rounded px-3 py-2">
+			</div>
+
+			<div>
+				<label class="block text-sm text-slate-600 mb-1">Marca</label>
+				<input type="text" th:field="*{brand}" required
+					class="w-full border border-slate-300 rounded px-3 py-2">
+			</div>
+
+			<div>
+				<label class="block text-sm text-slate-600 mb-1">Categoría</label>
+				<select th:field="*{categoryId}" class="w-full border border-slate-300 rounded px-3 py-2">
+					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">
+					</option>
+				</select>
+			</div>
+
+			<button type="submit" class="w-full bg-slate-800 text-white rounded py-2 hover:bg-slate-700">
+				Guardar
+			</button>
+
+		</form>
+
+	</main>
+
+	<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+
+</html>
