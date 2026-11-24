@@ -1,6 +1,7 @@
 package com.miapp.zapateria.controller;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,15 +12,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.miapp.zapateria.model.SaleState;
+import com.miapp.zapateria.model.User;
+import com.miapp.zapateria.repository.UserRepository;
 import com.miapp.zapateria.service.SaleService;
 
 @Controller
 public class SaleHistoryController {
 
 	private final SaleService saleService;
+	private final UserRepository userRepository;
 
-	public SaleHistoryController(SaleService saleService) {
+	public SaleHistoryController(SaleService saleService, UserRepository userRepository) {
 		this.saleService = saleService;
+		this.userRepository = userRepository;
 	}
 
 	@GetMapping("/sales/history")
@@ -36,10 +41,12 @@ public class SaleHistoryController {
 	}
 
 	@PostMapping("/sales/{id}/payment")
-	public String registerPayment(@PathVariable Long id, @RequestParam BigDecimal amount,
+	public String registerPayment(@PathVariable Long id, @RequestParam BigDecimal amount, Principal principal,
 			RedirectAttributes redirectAttributes) {
 		try {
-			saleService.registerPayment(id, amount);
+			User receiver = userRepository.findByEmail(principal.getName())
+					.orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+			saleService.registerPayment(id, amount, receiver);
 			redirectAttributes.addFlashAttribute("mensaje", "Abono registrado");
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -51,13 +58,10 @@ public class SaleHistoryController {
 	public String cancel(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 		try {
 			saleService.cancelSale(id);
-			redirectAttributes.addFlashAttribute("mensaje", "Abono registrado");
+			redirectAttributes.addFlashAttribute("mensaje", "Venta cancelada y stock devuelto");
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
 		return "redirect:/sales/" + id;
 	}
 }
-
-
-

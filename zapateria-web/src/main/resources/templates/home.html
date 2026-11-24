@@ -11,7 +11,7 @@
             th:text="${#temporals.createNow().hour < 12 ? 'Buenos días' : (#temporals.createNow().hour < 19 ? 'Buenas tardes' : 'Buenas noches')} + ', ' + ${user.name}">
             Hola
         </h1>
-        <p class="text-sm text-slate-500 mb-6">¿Qué querés hacer?</p>
+        <p class="text-sm text-slate-500 mb-6">¿Qué quieres hacer?</p>
 
         <a th:href="@{/sales}"
            class="block bg-slate-800 text-white rounded shadow p-6 mb-6 hover:bg-slate-700 transition">

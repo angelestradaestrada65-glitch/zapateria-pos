@@ -1,26 +1,25 @@
-document.addEventListener('DOMContentLoaded', function () {
-	var canvas = document.getElementById('salesChart');
-	if (!canvas) {
-		return;
-	}
+document.addEventListener('DOMContentLoaded', function() {
+    var canvas = document.getElementById('salesChart');
+    if (!canvas) {
+        return;
+    }
 
-	var labels = canvas.getAttribute('data-labels').split(',');
-	var values = canvas.getAttribute('data-values').split(',').map(Number);
+    var labels = canvas.getAttribute('data-labels').split(',');
+    var sold = canvas.getAttribute('data-sold').split(',').map(Number);
+    var collected = canvas.getAttribute('data-collected').split(',').map(Number);
 
-	new Chart(canvas, {
-		type: 'bar',
-		data: {
-			labels: labels,
-			datasets: [{
-				label: 'Vendido ($)',
-				data: values,
-				backgroundColor: '#1e293b'
-			}]
-		},
-		options: {
-			responsive: true,
-			plugins: { legend: { display: false } },
-			scales: { y: { beginAtZero: true } }
-		}
-	});
+    new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'Vendido ($)', data: sold, backgroundColor: '#1e293b' },
+                { label: 'Cobrado ($)', data: collected, backgroundColor: '#15803d' }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
 });

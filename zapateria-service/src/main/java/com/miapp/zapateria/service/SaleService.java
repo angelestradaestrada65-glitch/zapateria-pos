@@ -13,6 +13,7 @@ import com.miapp.zapateria.model.Sale;
 import com.miapp.zapateria.model.SaleDetail;
 import com.miapp.zapateria.model.SaleState;
 import com.miapp.zapateria.model.User;
+import com.miapp.zapateria.model.Payment;
 import com.miapp.zapateria.repository.CustomerRepository;
 import com.miapp.zapateria.repository.ProductDetailRepository;
 import com.miapp.zapateria.repository.SaleRepository;
@@ -101,6 +102,9 @@ public class SaleService {
 		}
 
 		sale.setAmountPaid(paid);
+		if (paid.compareTo(BigDecimal.ZERO) > 0) {
+			sale.getPayments().add(newPayment(sale, seller, paid));
+		}
 		sale.setSaleState(paid.compareTo(total) < 0 ? SaleState.ON_CREDIT : SaleState.PAID);
 
 		return saleRepository.save(sale);
@@ -119,7 +123,7 @@ public class SaleService {
 	}
 
 	@Transactional
-	public Sale registerPayment(Long saleId, BigDecimal amount) {
+	public Sale registerPayment(Long saleId, BigDecimal amount, User receiver) {
 		Sale sale = findById(saleId);
 
 		if (sale.getSaleState() != SaleState.ON_CREDIT) {
@@ -133,12 +137,21 @@ public class SaleService {
 		}
 
 		sale.setAmountPaid(sale.getAmountPaid().add(amount));
+		sale.getPayments().add(newPayment(sale, receiver, amount));
 
 		if (sale.getPending().compareTo(BigDecimal.ZERO) == 0) {
 			sale.setSaleState(SaleState.SETTLED);
 		}
 
 		return saleRepository.save(sale);
+	}
+
+	private Payment newPayment(Sale sale, User user, BigDecimal amount) {
+		Payment payment = new Payment();
+		payment.setSale(sale);
+		payment.setUser(user);
+		payment.setAmount(amount);
+		return payment;
 	}
 
 	@Transactional
@@ -159,9 +172,9 @@ public class SaleService {
 		sale.setSaleState(SaleState.CANCELLED);
 		return saleRepository.save(sale);
 	}
-	
+
 	public BigDecimal getDiscountPerUnit() {
 		return DISCOUNT;
 	}
-	
+
 }

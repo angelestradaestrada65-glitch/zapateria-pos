@@ -2,6 +2,7 @@ package com.miapp.zapateria.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.miapp.zapateria.dto.CustomerFormDTO;
 import com.miapp.zapateria.model.Customer;
 import com.miapp.zapateria.service.CustomerService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class CustomerController {
@@ -34,9 +37,13 @@ public class CustomerController {
 	}
 
 	@PostMapping("/customers")
-	public String create(@ModelAttribute CustomerFormDTO customerFormDTO, RedirectAttributes redirectAttributes) {
+	public String create(@Valid @ModelAttribute("customerForm") CustomerFormDTO customerForm, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			return "customers/form";
+		}
 		try {
-			customerService.createCustomer(customerFormDTO);
+			customerService.createCustomer(customerForm);
 			redirectAttributes.addFlashAttribute("mensaje", "Cliente guardado");
 			return "redirect:/customers";
 		} catch (IllegalArgumentException e) {
@@ -53,10 +60,14 @@ public class CustomerController {
 	}
 
 	@PostMapping("/customers/{id}")
-	public String update(@PathVariable Long id, @ModelAttribute CustomerFormDTO customerFormDTO,
-			RedirectAttributes redirectAttributes) {
+	public String update(@PathVariable Long id, @Valid @ModelAttribute("customerForm") CustomerFormDTO customerForm,
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("customerId", id);
+			return "customers/form";
+		}
 		try {
-			customerService.updateCustomer(id, customerFormDTO);
+			customerService.updateCustomer(id, customerForm);
 			redirectAttributes.addFlashAttribute("mensaje", "Cliente actualizado");
 			return "redirect:/customers";
 		} catch (IllegalArgumentException e) {

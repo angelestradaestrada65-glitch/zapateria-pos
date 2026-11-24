@@ -25,20 +25,36 @@
 					<th class="p-2 text-left">Nombre</th>
 					<th class="p-2 text-left">Marca</th>
 					<th class="p-2 text-left">Categoría</th>
+					<th class="p-2 text-left">Estado</th>
 					<th class="p-2 text-left">Acciones</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="product : ${products}" class="border-b">
+				<tr th:each="product : ${products}" class="border-b"
+					th:classappend="${!product.active} ? 'bg-slate-50 text-slate-400'">
 					<td class="p-2" th:text="${product.name}">Nombre</td>
 					<td class="p-2" th:text="${product.brand}">Marca</td>
 					<td class="p-2" th:text="${product.category.name}">Categoría</td>
+					<td class="p-2">
+						<span th:if="${product.active}"
+							class="bg-green-100 text-green-700 rounded px-2 py-0.5 text-xs">Activo</span>
+						<span th:unless="${product.active}"
+							class="bg-slate-200 text-slate-600 rounded px-2 py-0.5 text-xs">Inactivo</span>
+					</td>
 					<td class="p-2 space-x-2">
 						<a th:href="@{/admin/products/{id}/variants(id=${product.id})}"
 							class="text-slate-700 hover:underline">Variantes</a>
 						<a th:href="@{/admin/products/{id}/edit(id=${product.id})}"
 							class="text-slate-700 hover:underline">Editar</a>
-						<form th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post" class="inline">
+
+						<form th:action="@{/admin/products/{id}/active(id=${product.id})}" method="post" class="inline">
+							<input type="hidden" name="active" th:value="${!product.active}">
+							<button type="submit" class="text-slate-700 hover:underline"
+								th:text="${product.active} ? 'Desactivar' : 'Activar'">Desactivar</button>
+						</form>
+
+						<form th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post" class="inline"
+							data-confirm="¿Borrar este producto? Solo se puede si no tiene variantes.">
 							<button type="submit" class="text-red-600 hover:underline">Borrar</button>
 						</form>
 					</td>

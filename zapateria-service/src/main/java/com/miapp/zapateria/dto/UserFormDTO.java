@@ -1,12 +1,25 @@
 package com.miapp.zapateria.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class UserFormDTO {
 
+	@NotBlank(message = "El nombre es obligatorio")
+	@Size(max = 100, message = "El nombre no puede pasar de 100 caracteres")
 	private String name;
+
+	@NotBlank(message = "El email es obligatorio")
+	@Email(message = "El email no es válido")
 	private String email;
-	private String password;
+
+	@NotNull(message = "Elegí un rol")
 	private Long roleId;
-	private boolean active = true;
+	
+	private String password;
+	boolean active = true;
 
 	public String getName() {
 		return name;

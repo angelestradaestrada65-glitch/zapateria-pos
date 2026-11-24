@@ -33,7 +33,7 @@ public class SecurityConfig {
 		http
 		.authorizeHttpRequests(auth -> auth
 				// Rutas publicas solo login y archivos estaticos
-				.requestMatchers("/login", "/css/**", "/js/**", "/imagenes/**").permitAll()
+				.requestMatchers("/login", "/error", "/css/**", "/js/**", "/imagenes/**").permitAll()
 				
 				// Reportes y gestion de usuarios solo el dueño
 				.requestMatchers("/sysadmin/**").hasRole("SYSADMIN")

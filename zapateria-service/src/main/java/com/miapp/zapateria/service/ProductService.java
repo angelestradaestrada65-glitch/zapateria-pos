@@ -106,4 +106,10 @@ public class ProductService {
 			throw new IllegalArgumentException("No se puede borrar, esta variante ya tiene ventas registradas.");
 		}
 	}
+	
+	public void setActive(Long id, boolean active) {
+		Product product = findById(id);
+		product.setActive(active);
+		productRepository.save(product);
+	}
 }

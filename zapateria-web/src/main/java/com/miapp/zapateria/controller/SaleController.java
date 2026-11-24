@@ -70,7 +70,10 @@ public class SaleController {
 
 	private void loadScreenData(Model model) {
 		List<ProductDetail> availableDetails = productDetailRepository
-				.findAll().stream().filter(d -> d.getStock() > 0).sorted(Comparator
+				.findAll().stream()
+				.filter(d -> d.getStock() > 0)
+				.filter(d -> d.getProduct().isActive())
+				.sorted(Comparator
 						.comparing((ProductDetail d) -> d.getProduct().getName()).thenComparing(ProductDetail::getSize))
 				.toList();
 

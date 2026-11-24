@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,8 @@ import com.miapp.zapateria.dto.UserFormDTO;
 import com.miapp.zapateria.model.Role;
 import com.miapp.zapateria.model.User;
 import com.miapp.zapateria.service.UserService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class UserController {
@@ -44,7 +47,12 @@ public class UserController {
 	}
 
 	@PostMapping("/sysadmin/users")
-	public String create(@ModelAttribute UserFormDTO userForm, RedirectAttributes redirectAttributes) {
+	public String create(@Valid @ModelAttribute("userForm") UserFormDTO userForm, BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("roles", userService.listRoles());
+			return "users/form";
+		}
 		try {
 			userService.registerUser(userForm.getName(), userForm.getEmail(), userForm.getPassword(),
 					userForm.getRoleId());
@@ -52,7 +60,7 @@ public class UserController {
 			return "redirect:/sysadmin/users";
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
-			return "redirecy:/sysadmin/users/new";
+			return "redirect:/sysadmin/users/new";
 		}
 	}
 
@@ -65,8 +73,13 @@ public class UserController {
 	}
 
 	@PostMapping("/sysadmin/users/{id}")
-	public String update(@PathVariable Long id, @ModelAttribute UserFormDTO userForm,
-			RedirectAttributes redirectAttributes, Principal principal) {
+	public String update(@PathVariable Long id, @Valid @ModelAttribute("userForm") UserFormDTO userForm,
+			BindingResult result, Principal principal, Model model, RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("roles", userService.listRoles());
+			model.addAttribute("userId", id);
+			return "users/form";
+		}
 		try {
 			userService.updateUser(id, userForm, principal.getName());
 			redirectAttributes.addFlashAttribute("mensaje", "Usuario actualizado");

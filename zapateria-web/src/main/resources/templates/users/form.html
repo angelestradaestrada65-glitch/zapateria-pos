@@ -21,12 +21,14 @@
 			<div>
 				<label class="block text-sm text-slate-600 mb-1">Nombre</label>
 				<input type="text" th:field="*{name}" required class="w-full border border-slate-300 rounded px-3 py-2">
+				<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-xs text-red-600 mt-1"></p>
 			</div>
 
 			<div>
 				<label class="block text-sm text-slate-600 mb-1">Email</label>
 				<input type="email" th:field="*{email}" required
 					class="w-full border border-slate-300 rounded px-3 py-2">
+				<p th:if="${#fields.hasErrors('name')}" th:errors="*{email}" class="text-xs text-red-600 mt-1"></p>
 			</div>
 
 			<div>
@@ -43,6 +45,7 @@
 				<label class="block text-sm text-slate-600 mb-1">Rol</label>
 				<select th:field="*{roleId}" class="w-full border border-slate-300 rounded px-3 py-2">
 					<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+					<p th:if="${#fields.hasErrors('name')}" th:errors="*{role.id}" class="text-xs text-red-600 mt-1"></p>
 				</select>
 			</div>
 

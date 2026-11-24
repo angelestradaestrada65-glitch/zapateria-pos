@@ -2,6 +2,7 @@ package com.miapp.zapateria.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.miapp.zapateria.dto.ProductDetailFormDTO;
 import com.miapp.zapateria.dto.ProductFormDTO;
 import com.miapp.zapateria.service.ProductService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class ProductController {
@@ -36,7 +39,12 @@ public class ProductController {
 	}
 
 	@PostMapping("/admin/products")
-	public String create(@ModelAttribute ProductFormDTO productForm) {
+	public String create(@Valid @ModelAttribute("productForm") ProductFormDTO productForm, BindingResult result,
+			Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("categories", productService.listCategories());
+			return "products/form";
+		}
 		productService.createProduct(productForm);
 		return "redirect:/admin/products";
 	}
@@ -51,7 +59,13 @@ public class ProductController {
 	}
 
 	@PostMapping("/admin/products/{id}")
-	public String update(@PathVariable Long id, @ModelAttribute ProductFormDTO productForm) {
+	public String update(@PathVariable Long id, @Valid @ModelAttribute("productForm") ProductFormDTO productForm,
+			BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("categories", productService.listCategories());
+			model.addAttribute("productId", id);
+			return "products/form";
+		}
 		productService.updateProduct(id, productForm);
 		return "redirect:/admin/products";
 	}
@@ -76,11 +90,17 @@ public class ProductController {
 	}
 
 	@PostMapping("/admin/products/{id}/variants")
-	public String addVariant(@PathVariable Long id, @ModelAttribute ProductDetailFormDTO variantForm, Model model,
+	public String addVariant(@PathVariable Long id,
+			@Valid @ModelAttribute("variantForm") ProductDetailFormDTO variantForm, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			model.addAttribute("product", productService.findById(id));
+			model.addAttribute("variants", productService.listVariants(id));
+			return "products/variants";
+		}
 		try {
 			productService.addVariant(id, variantForm);
-			redirectAttributes.addAttribute("mensaje", "Variante agregada");
+			redirectAttributes.addFlashAttribute("mensaje", "Variante agregada");
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
@@ -97,6 +117,14 @@ public class ProductController {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
 		return "redirect:/admin/products/" + productId + "/variants";
+	}
+
+	@PostMapping("/admin/products/{id}/active")
+	public String setActive(@PathVariable Long id, @RequestParam boolean active,
+			RedirectAttributes redirectAttributes) {
+		productService.setActive(id, active);
+		redirectAttributes.addFlashAttribute("mensaje", active ? "Producto activado" : "Producto desacticado");
+		return "redirect:/admin/products";
 	}
 
 	private ProductFormDTO toForm(com.miapp.zapateria.model.Product product) {

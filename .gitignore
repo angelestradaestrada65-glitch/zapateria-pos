@@ -15,11 +15,17 @@ bin/
 *.iml
 .vscode/
 
-# Secretos y configuración local
+# Secretos y archivos del negocio real
 .env
 application-dev.properties
-
-# Logs y sistema
+iniciar.bat
+backup.bat
+logs/
+backups/
+*.backup
 *.log
+*.jar
+
+# Sistema
 .DS_Store
 Thumbs.db

@@ -19,12 +19,14 @@
 			<div>
 				<label class="block text-sm text-slate-600 mb-1">Nombre</label>
 				<input type="text" th:field="*{name}" required class="w-full border border-slate-300 rounded px-3 py-2">
+				<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-xs text-red-600 mt-1"></p>
 			</div>
 
 			<div>
 				<label class="block text-sm text-slate-600 mb-1">Marca</label>
 				<input type="text" th:field="*{brand}" required
 					class="w-full border border-slate-300 rounded px-3 py-2">
+				<p th:if="${#fields.hasErrors('name')}" th:errors="*{brand}" class="text-xs text-red-600 mt-1"></p>
 			</div>
 
 			<div>
@@ -32,6 +34,7 @@
 				<select th:field="*{categoryId}" class="w-full border border-slate-300 rounded px-3 py-2">
 					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">
 					</option>
+					<p th:if="${#fields.hasErrors('name')}" th:errors="*{category.id}" class="text-xs text-red-600 mt-1"></p>
 				</select>
 			</div>
 

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Error')}"></head>
+
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-6">
+
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-md text-center">
+
+        <p class="text-6xl font-bold text-slate-300" th:text="${status}">404</p>
+
+        <h1 class="text-xl font-bold text-slate-800 mt-2" th:switch="${status}">
+            <span th:case="403">No tenés permiso para ver esta página</span>
+            <span th:case="404">La página que buscás no existe</span>
+            <span th:case="*">Ocurrió un problema inesperado</span>
+        </h1>
+
+        <p class="text-sm text-slate-500 mt-2" th:if="${status == 500}">
+            No es culpa tuya. Intentá de nuevo, y si sigue pasando, avisale a quien administra el sistema.
+        </p>
+
+        <a th:href="@{/}" class="inline-block mt-6 bg-slate-800 text-white rounded px-6 py-2 hover:bg-slate-700">
+            Volver al inicio
+        </a>
+
+    </div>
+
+</body>
+</html>

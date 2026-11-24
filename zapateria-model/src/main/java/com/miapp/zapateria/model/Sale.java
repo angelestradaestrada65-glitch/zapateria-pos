@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 
 @Entity
@@ -49,6 +50,10 @@ public class Sale {
 
 	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SaleDetail> details = new ArrayList<>();
+
+	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("date ASC")
+	private List<Payment> payments = new ArrayList<>();
 
 	public BigDecimal getPending() {
 		return total.subtract(amountPaid);
@@ -116,6 +121,14 @@ public class Sale {
 
 	public void setDetails(List<SaleDetail> details) {
 		this.details = details;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
 	}
 
 }

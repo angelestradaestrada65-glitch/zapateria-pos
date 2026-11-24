@@ -27,6 +27,9 @@ public class Product {
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
 
+	@Column(nullable = false)
+	private boolean active = true;
+	
 	public Long getId() {
 		return id;
 	}
@@ -57,6 +60,14 @@ public class Product {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 	
