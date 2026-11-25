@@ -6,10 +6,10 @@ Desarrollado con Java 17, Spring Boot 3 y PostgreSQL para un negocio real.
 
 
 [Pantalla de venta](docs/screenshots/ventas.png)
-[Pantalla de venta](docs/screenshots/historial.png)
-[Pantalla de venta](docs/screenshots/productos.png)
-[Pantalla de venta](docs/screenshots/login.png)
-[Pantalla de venta](docs/screenshots/reportes.png)
+[Pantalla de historial](docs/screenshots/historial.png)
+[Pantalla de productos](docs/screenshots/productos.png)
+[Pantalla de login](docs/screenshots/login.png)
+[Pantalla de reportes](docs/screenshots/reportes.png)
 
 ## Funcionalidades
 
